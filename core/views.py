@@ -94,15 +94,15 @@ class QueryNetView(APIView):
     permission_class = [IsAuthenticated]
     def get(self, request):
         total_expenses = Expense.objects.filter(date__month = str(current_month))
-        expense_count = Expense.objects.all().count()
+        expense_count = Expense.objects.filter(date__month = str(current_month)).all().count()
        
         expense_sum = round((sum(expense.amount  for expense in total_expenses)), 2)
         total_income = Income.objects.filter(date__month = str(current_month))
-        income_count = Income.objects.all().count()
+        income_count = Income.objects.filter(date__month = str(current_month)).all().count()
       
         income_sum = round((sum(income.amount  for income in total_income)), 2)
-        category_count = Category.objects.all().count()
-        
+        category_count = Category.objects.filter(date__month = str(current_month)).all().count()
+
         net_value = income_sum-expense_sum
         return Response({"expense": expense_sum , "income": income_sum, "net":net_value, "incomeCount": income_count,"expenseCount": expense_count, "categoryCount":category_count }, status=status.HTTP_200_OK, )
 
