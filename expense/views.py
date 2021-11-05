@@ -80,7 +80,7 @@ class CategoryListView(APIView):
             name = data['name'],
             user = request.user
         )
-        serializer = ExpenseSerializer(category, many = False)
+        serializer = CategorySerializer(category, many = False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CategoryDetailView(APIView):
