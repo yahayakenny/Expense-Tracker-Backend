@@ -9,7 +9,6 @@ from django.http import Http404
 
 class ExpenseListView(APIView):
     permission_classes = [IsAuthenticated]
-    # permission_classes = [IsAdminUser]
     def get(self, request):
         results = Expense.objects.filter(user=request.user).order_by('-id')
         serializer = ExpenseSerializer(results, many = True)
@@ -29,6 +28,7 @@ class ExpenseListView(APIView):
 
 
 class ExpenseDetailView(APIView):
+    permission_classes = [IsAuthenticated]
     def get_object(self, pk):
         try:
             return Expense.objects.get(pk=pk)
@@ -67,7 +67,7 @@ class ExpenseDetailView(APIView):
             raise Http404
 
 class CategoryListView(APIView):
-     # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get(self, request, format = None):
         category = Category.objects.filter(user=request.user)
         serializer = CategorySerializer(category, many = True)
@@ -84,6 +84,7 @@ class CategoryListView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CategoryDetailView(APIView):
+    permission_classes = [IsAuthenticated]
     def get_object(self, pk):
         try:
             return Category.objects.get(pk=pk)

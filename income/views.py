@@ -7,8 +7,7 @@ from rest_framework import status
 from django.http import Http404
 
 class IncomeListView(APIView):
-    # permission_classes = [IsAuthenticated]
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
     def get(self, request, format = None):
         results = Income.objects.all().filter(user=request.user)
         serializer = IncomeSerializer(results, many = True)
@@ -26,6 +25,7 @@ class IncomeListView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class IncomeDetailView(APIView):
+    permission_classes = [IsAuthenticated]
     def get_object(self, pk):
         try:
             return Income.objects.get(pk=pk)

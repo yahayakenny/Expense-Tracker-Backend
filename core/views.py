@@ -12,8 +12,8 @@ from datetime import timedelta
 
 #Get all expenses for a date range(from_date and to_date on front end)
 class QueryDateRangeView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
-        permission_class = [IsAuthenticated]
         from_date = request.GET.get('from_date')
         to_date = request.GET.get('to_date')
         select = request.GET.get('select')
@@ -52,7 +52,7 @@ class QueryDateRangeView(APIView):
 
 #last 7 days
 class QueryDayGraph(APIView):
-    permission_class = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get (self, request):
         data = [] 
         delta = today - one_week_ago  
@@ -63,16 +63,15 @@ class QueryDayGraph(APIView):
             data.append({"day": day,"amount": day_cost})
         return Response({"filtered": data})
 
-
 #Query each week of the month
 class QueryWeekGraph(APIView):
-    permission_class = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         return Response(get_trunc_week(user=request.user), status=status.HTTP_200_OK)
 
 #Monthly Expenses
 class QueryMonthGraph(APIView):
-    permission_class = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get (self, request):
         data = []
         for i in range(1, 13):
@@ -82,16 +81,15 @@ class QueryMonthGraph(APIView):
             data.append({"month": month_name,"amount": month_cost})
         return Response({"filtered": data})
 
-
 class QueryMostRecentView(APIView):
-    permission_class = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         filtered = Expense.objects.filter(user=request.user).order_by('-id')[:5]
         serializer = ExpenseSerializer(filtered, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class QueryNetView(APIView):
-    permission_class = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         total_expenses = Expense.objects.filter(user=request.user).filter(date__month = str(current_month))
         expense_count = Expense.objects.filter(user=request.user).filter(date__month = str(current_month)).all().count()
@@ -106,9 +104,8 @@ class QueryNetView(APIView):
         net_value = income_sum-expense_sum
         return Response({"expense": expense_sum , "income": income_sum, "net":net_value, "incomeCount": income_count,"expenseCount": expense_count, "categoryCount":category_count }, status=status.HTTP_200_OK, )
 
-
 class QueryCategoryView(APIView):
-    permission_class = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         categories = Category.objects.filter(user=request.user).filter(date__month = str(current_month))
         data = []
