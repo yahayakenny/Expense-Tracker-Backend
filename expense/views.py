@@ -11,7 +11,7 @@ class ExpenseListView(APIView):
     permission_classes = [IsAuthenticated]
     # permission_classes = [IsAdminUser]
     def get(self, request):
-        results = Expense.objects.all().filter(user=request.user).order_by('-id')
+        results = Expense.objects.filter(user=request.user).order_by('-id')
         serializer = ExpenseSerializer(results, many = True)
         return Response(serializer.data)
 
@@ -69,17 +69,19 @@ class ExpenseDetailView(APIView):
 class CategoryListView(APIView):
      # permission_classes = [IsAuthenticated]
     def get(self, request, format = None):
-        category = Category.objects.all().filter(user=request.user)
+        category = Category.objects.filter(user=request.user)
         serializer = CategorySerializer(category, many = True)
         data = {"filtered": serializer.data}
         return Response(data)
 
     def post(self, request):
-        serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data=request.data
+        category = Category.objects.create(
+            name = data['name'],
+            user = request.user
+        )
+        serializer = ExpenseSerializer(category, many = False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CategoryDetailView(APIView):
     def get_object(self, pk):
