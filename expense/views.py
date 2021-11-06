@@ -1,16 +1,23 @@
-from rest_framework.pagination import PageNumberPagination
+from django.http.response import HttpResponse
 from expense.serializers import ExpenseSerializer, CategorySerializer
 from .models import Category, Expense
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
+from django.template.loader import render_to_string
 from django.http import Http404
+import xlwt
+import csv
+from xhtml2pdf import pisa
+
+
+from core.utils import current_month
 
 class ExpenseListView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        results = Expense.objects.filter(user=request.user).order_by('-id')
+        results = Expense.objects.filter(user=request.user).filter(date__month = str(current_month)).order_by('-id')
         serializer = ExpenseSerializer(results, many = True)
         return Response(serializer.data)
 
@@ -69,7 +76,7 @@ class ExpenseDetailView(APIView):
 class CategoryListView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format = None):
-        category = Category.objects.filter(user=request.user)
+        category = Category.objects.filter(user=request.user).filter(date__month = str(current_month))
         serializer = CategorySerializer(category, many = True)
         data = {"filtered": serializer.data}
         return Response(data)
@@ -118,3 +125,54 @@ class CategoryDetailView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise Http404
+
+
+class ExportExpenseCsv(APIView):
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=expenses.csv' 
+
+        writer = csv.writer(response)
+        writer.writerow(['name', 'category', 'amount', 'description'])
+
+        expenses = Expense.objects.filter(user=request.user).filter(date__month = str(current_month)).order_by('-id')
+
+        for expense in expenses:
+            writer.writerow([expense.name, expense.category.name, expense.amount, expense.description])
+
+        return response
+
+# pipenv xlwt
+class ExportExpenseExcel(APIView):
+    def get (self, request, *args, **kwargs):
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=expenses.xls'
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('Expenses')
+        row_num = 0
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+        columns = ['name', 'category', 'amount', 'description']
+        for col_num in range(len(columns)):
+            ws.write(row_num, col_num, columns[col_num], font_style)
+        font_style = xlwt.XFStyle()
+        rows = Expense.objects.filter(user=request.user).order_by('-id').values_list('name', 'category_id', 'amount', 'description')
+        for row in rows:
+            row_num+=1
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, str(row[col_num]), font_style)
+        wb.save(response)
+        return response
+
+# pipenv install xhtml2pdf
+# https://stackoverflow.com/questions/50384613/pdf-in-django-rest-framework
+class ExportExpensePdf (APIView):
+    def get (self, *args, **kwargs):
+        expenses = Expense.objects.all()
+        template_path = 'expenses.html'
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename=expenses.pdf'
+        html = render_to_string(template_path, {'expenses': expenses})
+        pisaStatus = pisa.CreatePDF(html, dest=response)
+        return response 
+        

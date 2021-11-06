@@ -13,6 +13,9 @@ djangorestframework-simplejwt = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 whitenoise = "*"
+xlwt = "*"
+weasyprint = "*"
+xhtml2pdf = "*"
 
 [dev-packages]
 
