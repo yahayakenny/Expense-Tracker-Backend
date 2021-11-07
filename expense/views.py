@@ -76,7 +76,7 @@ class ExpenseDetailView(APIView):
 class CategoryListView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format = None):
-        category = Category.objects.all()
+        category = Category.objects.filter(user=request.user)
         serializer = CategorySerializer(category, many = True)
         data = {"filtered": serializer.data}
         return Response(data)
