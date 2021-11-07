@@ -84,7 +84,7 @@ class QueryMonthGraph(APIView):
 class QueryMostRecentView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        filtered = Expense.objects.filter(user=request.user).order_by('-id')[:5]
+        filtered = Expense.objects.filter(user=request.user).filter(date__month = str(current_month)).order_by('-id')[:5]
         serializer = ExpenseSerializer(filtered, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

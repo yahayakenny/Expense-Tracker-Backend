@@ -156,7 +156,7 @@ class ExportExpenseExcel(APIView):
         for col_num in range(len(columns)):
             ws.write(row_num, col_num, columns[col_num], font_style)
         font_style = xlwt.XFStyle()
-        rows = Expense.objects.filter(user=request.user).order_by('-id').values_list('name', 'category_id', 'amount', 'description')
+        rows = Expense.objects.filter(user=request.user).filter(date__month = str(current_month)).order_by('-id').values_list('name', 'category_id', 'amount', 'description')
         for row in rows:
             row_num+=1
             for col_num in range(len(row)):
@@ -175,4 +175,3 @@ class ExportExpensePdf (APIView):
         html = render_to_string(template_path, {'expenses': expenses})
         pisaStatus = pisa.CreatePDF(html, dest=response)
         return response 
-        

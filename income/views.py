@@ -5,11 +5,12 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework import status
 from django.http import Http404
+from core.utils import current_month
 
 class IncomeListView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format = None):
-        results = Income.objects.all().filter(user=request.user)
+        results = Income.objects.all().filter(user=request.user).filter(date__month = str(current_month))
         serializer = IncomeSerializer(results, many = True)
         return Response(serializer.data)
 
