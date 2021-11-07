@@ -131,15 +131,11 @@ class ExportExpenseCsv(APIView):
     def get(self, request, *args, **kwargs):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename=expenses.csv' 
-
         writer = csv.writer(response)
         writer.writerow(['name', 'category', 'amount', 'description'])
-
         expenses = Expense.objects.filter(user=request.user).filter(date__month = str(current_month)).order_by('-id')
-
         for expense in expenses:
             writer.writerow([expense.name, expense.category.name, expense.amount, expense.description])
-
         return response
 
 # pipenv xlwt
@@ -167,8 +163,8 @@ class ExportExpenseExcel(APIView):
 # pipenv install xhtml2pdf
 # https://stackoverflow.com/questions/50384613/pdf-in-django-rest-framework
 class ExportExpensePdf (APIView):
-    def get (self, *args, **kwargs):
-        expenses = Expense.objects.all()
+    def get (self, request , *args, **kwargs):
+        expenses = Expense.objects.filter(user=request.user).filter(date__month = str(current_month)).order_by('-id')
         template_path = 'expenses.html'
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename=expenses.pdf'
