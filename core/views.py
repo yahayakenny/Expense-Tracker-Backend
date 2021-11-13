@@ -101,7 +101,7 @@ class QueryNetView(APIView):
         income_sum = round((sum(income.amount  for income in total_income)), 2)
         category_count = Category.objects.filter(user=request.user).filter(date__month = str(current_month)).all().count()
 
-        net_value = income_sum-expense_sum
+        net_value = round((income_sum-expense_sum), 2)
         return Response({"expense": expense_sum , "income": income_sum, "net":net_value, "incomeCount": income_count,"expenseCount": expense_count, "categoryCount":category_count }, status=status.HTTP_200_OK, )
 
 class QueryCategoryView(APIView):
