@@ -56,7 +56,7 @@ class QueryDayGraph(APIView):
     def get (self, request):
         data = [] 
         delta = today - one_week_ago  
-        for i in range(delta.days):
+        for i in range(delta.days + 1):
             day = one_week_ago + timedelta(days=i)
             queryset = Expense.objects.filter(user=request.user).filter(date__startswith = day)
             day_cost = sum([expense.amount for expense in queryset])
