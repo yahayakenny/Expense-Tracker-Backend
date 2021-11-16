@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/', include('income.urls')),
     path('api/', include('users.urls')),  
     path('api/', include('core.urls')),
+    path('api/', include('settings.urls')),
     re_path(r'^static/(?P<path>.*)$', serve,
         {'document_root': settings.STATIC_ROOT}),
 ]
