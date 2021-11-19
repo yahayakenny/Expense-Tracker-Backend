@@ -7,7 +7,7 @@ from rest_framework import status
 from django.http import Http404
 
 class SettingsListView(APIView):
-    # permission_classes = [IsAuthenticated]
+
     def get(self, request, format = None):
         results = Settings.objects.all().filter(user=request.user).order_by('-id')
         serializer = SettingsSerializer(results, many = True)
@@ -15,6 +15,7 @@ class SettingsListView(APIView):
 
     def post(self, request):
         data=request.data
+        print(data)
         settings = Settings.objects.create(
             currency = data['currency'],
             limit = data['limit'],
@@ -23,7 +24,7 @@ class SettingsListView(APIView):
         serializer = SettingsSerializer(settings, many = False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class settingsDetailView(APIView):
+class SettingsDetailView(APIView):
     permission_classes = [IsAuthenticated]
     def get_object(self, pk):
         try:
