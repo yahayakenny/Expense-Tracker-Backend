@@ -1,6 +1,6 @@
 # Expense-Tracker-Backend
 Simple expense tracker built with django rest framework, redux and react to help me track and manage my expenses.
-Please ensure you have python installed,I used python 3.9 for this project
+Please ensure you have python installed. I used python 3.9 for this project
 1) Please note that all installations were done using 'pipenv install <package-name>' instead of 'pip install'
 2) Hence ensure you have pipenv installed, 
 3) To do this, ensure you have python installed already, then run 'pip install pipenv'
