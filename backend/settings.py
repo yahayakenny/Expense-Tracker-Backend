@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-import django_heroku
+import django_on_heroku
 import os
 import dj_database_url
 
@@ -154,4 +154,4 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-django_heroku.settings(locals())
+django_on_heroku.settings(locals())
