@@ -1,13 +1,14 @@
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import UserSerializer, UserSerializerWithToken
-from rest_framework import permissions
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User
+from django.http import Http404
+from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
-from rest_framework import status
-from django.http import Http404
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+from .serializers import UserSerializer, UserSerializerWithToken
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
