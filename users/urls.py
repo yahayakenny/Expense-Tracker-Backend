@@ -1,11 +1,7 @@
-from .views import (
-    MyTokenObtainPairView,
-    RegisterUser,
-    UserProfile,
-    UsersDetail,
-    UsersList
-)
 from django.urls import path
+
+from .views import (MyTokenObtainPairView, RegisterUser, UserProfile,
+                    UsersDetail, UsersList)
 
 urlpatterns = [
     path('users/login', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),

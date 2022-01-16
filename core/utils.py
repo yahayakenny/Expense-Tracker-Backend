@@ -1,7 +1,8 @@
-from expense.models import Expense
-from datetime import datetime, timedelta, time
-from django.db.models.functions import TruncWeek
+from datetime import datetime, time, timedelta
+
 from django.db.models import Sum
+from django.db.models.functions import TruncWeek
+from expense.models import Expense
 
 today = datetime.now().date()
 tomorrow = today + timedelta(1)
