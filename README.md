@@ -3,6 +3,7 @@
 Simple expense tracker built with django rest framework, redux and react to help me track and manage my expenses.
 Please ensure you have python installed. I used python 3.9 for this project
 
+
 1. Please note that all installations were done using 'pipenv install <package-name>' instead of 'pip install'
 2. Hence ensure you have pipenv installed,
 3. To do this, ensure you have python installed already, then run 'pip install pipenv'
@@ -14,3 +15,5 @@ Please ensure you have python installed. I used python 3.9 for this project
 9. Run 'pipenv shell' to activate the virtual environment
 10. Run 'pipenv install --dev' to install all the backend project dependencies as defined in the 'Pipfile.lock' file
 11. Launch the project using 'python manage.py runserver'
+
+
