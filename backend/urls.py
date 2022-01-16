@@ -21,10 +21,10 @@ from django.views.static import serve
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("expense.urls", namespace="expenses")),
-    path("api/", include("income.urls",namespace="income")),
-    path("api/", include("users.urls", namespace="users")),
-    path("api/", include("core.urls", namespace="core")),
-    path("api/", include("settings.urls", namespace="settings")),
+    path("api/v1", include("expense.urls", namespace="expenses")),
+    path("api/v1", include("income.urls",namespace="income")),
+    path("api/v1", include("users.urls", namespace="users")),
+    path("api/v1", include("core.urls", namespace="core")),
+    path("api/v1", include("settings.urls", namespace="settings")),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
 ]
