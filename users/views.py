@@ -25,7 +25,8 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 # get a user profile
 class UserProfile(APIView):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, format=None):
         user = request.user
         serializer = UserSerializer(user, many=False)
@@ -54,7 +55,7 @@ class RegisterUser(APIView):
 
 # Get all users
 class UsersList(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = (permissions.IsAdminUser,)
 
     def get(self, request, format=None):
         users = User.objects.all()
@@ -63,7 +64,7 @@ class UsersList(APIView):
 
 
 class UsersDetail(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = (permissions.IsAdminUser,)
 
     def get_object(self, pk):
         try:

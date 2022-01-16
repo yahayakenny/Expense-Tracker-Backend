@@ -9,6 +9,7 @@ from .serializers import SettingsSerializer
 
 
 class SettingsListView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, format=None):
         results = Settings.objects.all().filter(user=request.user).order_by("-id")
         serializer = SettingsSerializer(results, many=True)
@@ -25,7 +26,7 @@ class SettingsListView(APIView):
 
 
 class SettingsDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self, pk):
         try:

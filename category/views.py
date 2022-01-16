@@ -11,7 +11,7 @@ from .serializers import CategorySerializer
 
 
 class CategoryListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
         category = Category.objects.filter(user=request.user)
@@ -27,7 +27,7 @@ class CategoryListView(APIView):
 
 
 class CategoryDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self, pk):
         try:

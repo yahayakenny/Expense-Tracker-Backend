@@ -1,13 +1,13 @@
 import calendar
 from datetime import timedelta
 
-from expense.models import Expense
 from category.models import Category
+from expense.models import Expense
 from expense.serializers import ExpenseSerializer
 from income.models import Income
 from income.serializers import IncomeSerializer
 from rest_framework import status
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,7 +16,7 @@ from core.utils import current_month, get_trunc_week, one_week_ago, today
 
 # Get all expenses for a date range(from_date and to_date on front end)
 class QueryDateRangeView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         from_date = request.GET.get("from_date")
@@ -70,7 +70,7 @@ class QueryDateRangeView(APIView):
 
 # last 7 days
 class QueryDayGraph(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         data = []
@@ -85,7 +85,7 @@ class QueryDayGraph(APIView):
 
 # Query each week of the month
 class QueryWeekGraph(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         return Response(get_trunc_week(user=request.user), status=status.HTTP_200_OK)
@@ -93,7 +93,7 @@ class QueryWeekGraph(APIView):
 
 # Monthly Expenses
 class QueryMonthGraph(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         data = []
@@ -106,7 +106,7 @@ class QueryMonthGraph(APIView):
 
 
 class QueryMostRecentView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         filtered = (
@@ -119,7 +119,7 @@ class QueryMostRecentView(APIView):
 
 
 class QueryNetView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         total_expenses = Expense.objects.filter(user=request.user).filter(
@@ -166,7 +166,7 @@ class QueryNetView(APIView):
 
 
 class QueryCategoryView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         categories = Category.objects.filter(user=request.user).filter(

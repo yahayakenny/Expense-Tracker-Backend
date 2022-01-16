@@ -1,7 +1,7 @@
 from core.utils import current_month
 from django.http import Http404
 from rest_framework import status
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,7 +11,7 @@ from .models import Income
 
 
 class IncomeListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
         results = (
@@ -33,7 +33,7 @@ class IncomeListView(APIView):
 
 
 class IncomeDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self, pk):
         try:

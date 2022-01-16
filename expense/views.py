@@ -6,7 +6,7 @@ from django.http import Http404
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
 from rest_framework import status
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
@@ -17,7 +17,7 @@ from .models import Expense
 
 
 class ExpenseListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         results = (
@@ -42,7 +42,7 @@ class ExpenseListView(APIView):
 
 
 class ExpenseDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self, pk):
         try:
