@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "core.apps.CoreConfig",
     "settings.apps.SettingsConfig",
+    "category.apps.CategoryConfig",
     "corsheaders",
 ]
 

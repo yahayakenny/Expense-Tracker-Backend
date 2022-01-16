@@ -26,5 +26,6 @@ urlpatterns = [
     path("api/v1", include("users.urls", namespace="users")),
     path("api/v1", include("core.urls", namespace="core")),
     path("api/v1", include("settings.urls", namespace="settings")),
+    path("api/v1", include("category.urls", namespace="category")),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
 ]
