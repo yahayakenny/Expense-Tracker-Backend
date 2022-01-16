@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from expense.models import Category, Expense
+from expense.models import Expense
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
@@ -10,8 +10,3 @@ class ExpenseSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ["id", "user", "name"]
-        depth = 1

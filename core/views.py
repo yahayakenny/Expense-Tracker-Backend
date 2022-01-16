@@ -1,7 +1,8 @@
 import calendar
 from datetime import timedelta
 
-from expense.models import Category, Expense
+from expense.models import Expense
+from category.models import Category
 from expense.serializers import ExpenseSerializer
 from income.models import Income
 from income.serializers import IncomeSerializer

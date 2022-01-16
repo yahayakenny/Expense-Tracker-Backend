@@ -10,6 +10,4 @@ urlpatterns = [
     path("expense/export-excel/", views.ExportExpenseExcel.as_view(), name="export_excel"),
     path("expense/export-csv/", views.ExportExpenseCsv.as_view(), name="export_csv"),
     path("expense/export-pdf/", views.ExportExpensePdf.as_view(), name="export_pdf"),
-    path("category/", views.CategoryListView.as_view(), name="category"),
-    path("category/<int:pk>/", views.CategoryDetailView.as_view(), name="category"),
 ]
