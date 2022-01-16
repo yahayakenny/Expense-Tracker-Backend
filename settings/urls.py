@@ -2,8 +2,8 @@ from django.urls import path
 
 from . import views
 
-app_name = 'settings'
+app_name = "settings"
 
 urlpatterns = [
-    path('settings/', views.SettingsListView.as_view()),
+    path("settings/", views.SettingsListView.as_view(), name="settings"),
 ]

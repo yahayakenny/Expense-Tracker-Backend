@@ -16,6 +16,7 @@ xlwt = "*"
 weasyprint = "*"
 xhtml2pdf = "*"
 django-on-heroku = "*"
+black = "*"
 
 [dev-packages]
 

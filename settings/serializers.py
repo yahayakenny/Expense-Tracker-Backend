@@ -4,7 +4,7 @@ from settings.models import Settings
 
 
 class SettingsSerializer(ModelSerializer):
-    class Meta: 
+    class Meta:
         model = Settings
-        fields = ['currency', 'limit']
+        fields = ["currency", "limit"]
         depth = 2

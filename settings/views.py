@@ -9,25 +9,24 @@ from .serializers import SettingsSerializer
 
 
 class SettingsListView(APIView):
-
-    def get(self, request, format = None):
-        results = Settings.objects.all().filter(user=request.user).order_by('-id')
-        serializer = SettingsSerializer(results, many = True)
+    def get(self, request, format=None):
+        results = Settings.objects.all().filter(user=request.user).order_by("-id")
+        serializer = SettingsSerializer(results, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        data=request.data
+        data = request.data
         print(data)
         settings = Settings.objects.create(
-            currency = data['currency'],
-            limit = data['limit'],
-            user = request.user
+            currency=data["currency"], limit=data["limit"], user=request.user
         )
-        serializer = SettingsSerializer(settings, many = False)
+        serializer = SettingsSerializer(settings, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class SettingsDetailView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Settings.objects.get(pk=pk)

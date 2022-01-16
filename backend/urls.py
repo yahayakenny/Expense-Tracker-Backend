@@ -20,12 +20,11 @@ from django.urls import include, path, re_path
 from django.views.static import serve
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('expense.urls')),
-    path('api/', include('income.urls')),
-    path('api/', include('users.urls')),  
-    path('api/', include('core.urls')),
-    path('api/', include('settings.urls')),
-    re_path(r'^static/(?P<path>.*)$', serve,
-        {'document_root': settings.STATIC_ROOT}),
+    path("admin/", admin.site.urls),
+    path("api/", include("expense.urls", namespace="expenses")),
+    path("api/", include("income.urls",namespace="income")),
+    path("api/", include("users.urls", namespace="users")),
+    path("api/", include("core.urls", namespace="core")),
+    path("api/", include("settings.urls", namespace="settings")),
+    re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
 ]

@@ -12,24 +12,29 @@ from .models import Income
 
 class IncomeListView(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request, format = None):
-        results = Income.objects.all().filter(user=request.user).filter(date__month = str(current_month))
-        serializer = IncomeSerializer(results, many = True)
+
+    def get(self, request, format=None):
+        results = (
+            Income.objects.all().filter(user=request.user).filter(date__month=str(current_month))
+        )
+        serializer = IncomeSerializer(results, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        data=request.data
+        data = request.data
         income = Income.objects.create(
-            name = data['name'],
-            amount = data['amount'],
-            description = data['description'],
-            user = request.user
+            name=data["name"],
+            amount=data["amount"],
+            description=data["description"],
+            user=request.user,
         )
-        serializer = IncomeSerializer(income, many = False)
+        serializer = IncomeSerializer(income, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class IncomeDetailView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get_object(self, pk):
         try:
             return Income.objects.get(pk=pk)
