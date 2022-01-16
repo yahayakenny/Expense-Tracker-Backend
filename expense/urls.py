@@ -2,14 +2,14 @@ from django.urls import path
 
 from . import views
 
-app_name = 'expense'
+app_name = "expense"
 
 urlpatterns = [
-    path('expense/', views.ExpenseListView.as_view()),
-    path('expense/<int:pk>/', views.ExpenseDetailView.as_view()),
-    path('expense/export-excel/', views.ExportExpenseExcel.as_view()),
-    path('expense/export-csv/', views.ExportExpenseCsv.as_view()),
-    path('expense/export-pdf/', views.ExportExpensePdf.as_view()),
-    path('category/', views.CategoryListView.as_view()),
-    path('category/<int:pk>/', views.CategoryDetailView.as_view()),
+    path("expense/", views.ExpenseListView.as_view(), name="expense"),
+    path("expense/<int:pk>/", views.ExpenseDetailView.as_view(), name="expense"),
+    path("expense/export-excel/", views.ExportExpenseExcel.as_view(), name="export_excel"),
+    path("expense/export-csv/", views.ExportExpenseCsv.as_view(), name="export_csv"),
+    path("expense/export-pdf/", views.ExportExpensePdf.as_view(), name="export_pdf"),
+    path("category/", views.CategoryListView.as_view(), name="category"),
+    path("category/<int:pk>/", views.CategoryDetailView.as_view(), name="category"),
 ]

@@ -4,7 +4,14 @@ from income.models import Income
 
 
 class IncomeSerializer(ModelSerializer):
-    class Meta: 
+    class Meta:
         model = Income
-        fields = ['id','user', 'name', 'description', 'amount', 'date',]
+        fields = [
+            "id",
+            "user",
+            "name",
+            "description",
+            "amount",
+            "date",
+        ]
         depth = 2

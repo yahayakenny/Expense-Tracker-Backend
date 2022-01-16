@@ -14,50 +14,57 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         serializer = UserSerializerWithToken(self.user).data
-        for i, j in serializer.items ():
+        for i, j in serializer.items():
             data[i] = j
         return data
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
-#get a user profile
+
+# get a user profile
 class UserProfile(APIView):
     # permission_classes = [permissions.IsAuthenticated]
-    def get(self, request, format = None):
+    def get(self, request, format=None):
         user = request.user
-        serializer = UserSerializer(user, many = False)
+        serializer = UserSerializer(user, many=False)
         return Response(serializer.data)
 
-#create a new user
+
+# create a new user
 class RegisterUser(APIView):
-    def post(self, request, format = None):
+    def post(self, request, format=None):
         data = request.data
-        try: 
+        try:
             user = User.objects.create(
-            first_name = data['first_name'],
-            last_name = data['last_name'],
-            username = data ['username'],
-            email = data['email'],
-            password = make_password(data['password'])
+                first_name=data["first_name"],
+                last_name=data["last_name"],
+                username=data["username"],
+                email=data["email"],
+                password=make_password(data["password"]),
             )
-            serializer = UserSerializerWithToken(user, many = False)
+            serializer = UserSerializerWithToken(user, many=False)
             return Response(serializer.data)
 
-        except: 
-            message = {'error': 'User not created, please recheck input parameters'}
-            return Response(message, status = status.HTTP_400_BAD_REQUEST)
+        except:
+            message = {"error": "User not created, please recheck input parameters"}
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)
 
-#Get all users
+
+# Get all users
 class UsersList(APIView):
     permission_classes = [permissions.IsAdminUser]
-    def get(self, request, format = None):
+
+    def get(self, request, format=None):
         users = User.objects.all()
-        serializer = UserSerializer(users, many = True)
+        serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
+
 
 class UsersDetail(APIView):
     permission_classes = [permissions.IsAdminUser]
+
     def get_object(self, pk):
         try:
             return User.objects.get(pk=pk)
@@ -81,4 +88,3 @@ class UsersDetail(APIView):
         user = self.get_object(pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        

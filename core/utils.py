@@ -9,10 +9,18 @@ tomorrow = today + timedelta(1)
 today_start = datetime.combine(today, time())
 today_end = datetime.combine(tomorrow, time())
 one_week_ago = today - timedelta(days=7)
-one_month_ago=today-timedelta(days=30)
+one_month_ago = today - timedelta(days=30)
 current_month = today.month
 
+
 def get_trunc_week(user):
-    filtered = Expense.objects.all().filter(user=user).annotate(week = TruncWeek('date')).values('week').annotate(total= Sum('amount')).order_by('week')
+    filtered = (
+        Expense.objects.all()
+        .filter(user=user)
+        .annotate(week=TruncWeek("date"))
+        .values("week")
+        .annotate(total=Sum("amount"))
+        .order_by("week")
+    )
     data = {"filtered": filtered}
     return data
