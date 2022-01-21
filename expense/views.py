@@ -20,25 +20,35 @@ class ExpenseListView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        results = (
-            Expense.objects.filter(user=request.user)
-            .filter(date__month=str(current_month))
-            .order_by("-id")
-        )
-        serializer = ExpenseSerializer(results, many=True)
-        return Response(serializer.data)
+        try:
+            results = (
+                Expense.objects.filter(user=request.user)
+                .filter(date__month=str(current_month))
+                .order_by("-id")
+            )
+            serializer = ExpenseSerializer(results, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response(
+                data={"message": "Unable to retrieve expenses"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def post(self, request):
-        data = request.data
-        expense = Expense.objects.create(
-            name=data["name"],
-            amount=data["amount"],
-            description=data["description"],
-            category_id=data["category"],
-            user=request.user,
-        )
-        serializer = ExpenseSerializer(expense, many=False)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            data = request.data
+            expense = Expense.objects.create(
+                name=data["name"],
+                amount=data["amount"],
+                description=data["description"],
+                category_id=data["category"],
+                user=request.user,
+            )
+            serializer = ExpenseSerializer(expense, many=False)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except:
+            return Response(
+                data={"message": "Unable to create expense"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class ExpenseDetailView(APIView):

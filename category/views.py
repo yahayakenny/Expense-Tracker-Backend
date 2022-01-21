@@ -14,16 +14,27 @@ class CategoryListView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
-        category = Category.objects.filter(user=request.user)
-        serializer = CategorySerializer(category, many=True)
-        data = {"filtered": serializer.data}
-        return Response(data)
+        try:
+            category = Category.objects.filter(user=request.user)
+            serializer = CategorySerializer(category, many=True)
+            data = {"filtered": serializer.data}
+            return Response(data, status=status.HTTP_200_OK)
+
+        except:
+            return Response(
+                data={"message": "Unable to get categories"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def post(self, request):
-        data = request.data
-        category = Category.objects.create(name=data["name"], user=request.user)
-        serializer = CategorySerializer(category, many=False)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            data = request.data
+            category = Category.objects.create(name=data["name"], user=request.user)
+            serializer = CategorySerializer(category, many=False)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except:
+            return Response(
+                data={"message": "Unable to create category"}, status=status.HTTP_406_NOT_ACCEPTABLE
+            )
 
 
 class CategoryDetailView(APIView):
@@ -38,22 +49,42 @@ class CategoryDetailView(APIView):
     def get(self, request, pk):
         category = self.get_object(pk)
         if request.user == category.user:
-            serializer = CategorySerializer(category)
-            return Response(serializer.data)
+            try:
+                serializer = CategorySerializer(category)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except:
+                return Response(
+                    data={"message": "Unable to get category detail"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         else:
-            raise Http404
+            return Response(
+                data={"message": "Not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
     def put(self, request, pk):
         category = self.get_object(pk)
         if request.user == category.user:
-            serializer = CategorySerializer(category, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                serializer = CategorySerializer(category, data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+                else:
+                    return Response(
+                        data={"message": "Invalid parameters"}, status=status.HTTP_400_BAD_REQUEST
+                    )
+            except:
+                return Response(
+                    data={"message": "Unable to update category"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         else:
-            raise Http404
+            return Response(
+                data={"message": "Not allowed"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
     def delete(self, request, pk):
         category = self.get_object(pk)
