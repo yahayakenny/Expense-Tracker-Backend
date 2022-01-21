@@ -14,22 +14,34 @@ class IncomeListView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
-        results = (
-            Income.objects.all().filter(user=request.user).filter(date__month=str(current_month))
-        )
-        serializer = IncomeSerializer(results, many=True)
-        return Response(serializer.data)
+        try:
+            results = (
+                Income.objects.all()
+                .filter(user=request.user)
+                .filter(date__month=str(current_month))
+            )
+            serializer = IncomeSerializer(results, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response(
+                data={"message": "Unable to retrieve income"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def post(self, request):
-        data = request.data
-        income = Income.objects.create(
-            name=data["name"],
-            amount=data["amount"],
-            description=data["description"],
-            user=request.user,
-        )
-        serializer = IncomeSerializer(income, many=False)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            data = request.data
+            income = Income.objects.create(
+                name=data["name"],
+                amount=data["amount"],
+                description=data["description"],
+                user=request.user,
+            )
+            serializer = IncomeSerializer(income, many=False)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except:
+            return Response(
+                data={"message": "Unable to add new income"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class IncomeDetailView(APIView):
@@ -45,7 +57,7 @@ class IncomeDetailView(APIView):
         income = self.get_object(pk)
         if request.user == income.user:
             serializer = IncomeSerializer(income)
-            return Response(serializer.data)
+            return Response(serializer.data,status=status.HTTP_200_OK)
         else:
             raise Http404
 
@@ -55,7 +67,7 @@ class IncomeDetailView(APIView):
             serializer = IncomeSerializer(income, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             raise Http404
 
