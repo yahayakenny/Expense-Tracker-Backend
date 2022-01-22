@@ -24,7 +24,7 @@ class IncomeListView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response(
-                data={"message": "Unable to retrieve income"}, status=status.HTTP_400_BAD_REQUEST
+                data={"message": "Unable to retrieve income"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
     def post(self, request):
@@ -59,7 +59,7 @@ class IncomeDetailView(APIView):
             serializer = IncomeSerializer(income)
             return Response(serializer.data,status=status.HTTP_200_OK)
         else:
-            raise Http404
+            raise Response(data={"message": "Not permitted"}, status=status.HTTP_403_FORBIDDEN)
 
     def put(self, request, pk):
         income = self.get_object(pk)

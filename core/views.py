@@ -27,7 +27,7 @@ class QueryDateRangeView(APIView):
                 .order_by("-id")
             )
             serializer = ExpenseSerializer(filtered_expense, many=True)
-            expense_sum = Expense.get_expense_total(from_date, to_date, select, request.user)
+            expense_sum = Expense.get_expense_total(from_date, to_date, request.user)
             json_data = {"filtered": serializer.data, "total": expense_sum}
             try:
                 if json_data:
@@ -44,7 +44,7 @@ class QueryDateRangeView(APIView):
                 .order_by("-id")
             )
             serializer = IncomeSerializer(filtered_income, many=True)
-            income_sum = Income.get_income_total(from_date, to_date, select, request.user)
+            income_sum = Income.get_income_total(from_date, to_date, request.user)
             json_data = {"filtered": serializer.data, "total": income_sum}
             try:
                 if json_data:
