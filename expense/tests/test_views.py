@@ -1,10 +1,10 @@
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
+from core.helpers import AuthenticateUser
 from expense.models import Expense
 
 
-class TestExpenseView(APITestCase):
+class TestExpenseView(AuthenticateUser):
     def create_expense(self):
         sample_expense = {
             "name": "new expense",
@@ -19,27 +19,6 @@ class TestExpenseView(APITestCase):
         sample_category = {"name": "new category"}
         response = self.client.post(reverse("category:category_list"), sample_category)
         return response
-
-    def authenticate_user(self):
-        self.client.post(
-            reverse("users:register"),
-            {
-                "first_name": "test",
-                "last_name": "user",
-                "email": "user@email.com",
-                "username": "testuser",
-                "password": "password",
-            },
-        )
-        response = self.client.post(
-            reverse("users:login"),
-            {
-                "username": "testuser",
-                "password": "password",
-            },
-        )
-        token = response.data["token"]
-        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
     def test_cannot_retrieve_expense_list_without_auth(self):
         response = self.client.get(reverse("expense:expense_list"))
@@ -91,5 +70,3 @@ class TestExpenseView(APITestCase):
         current_expense_count = Expense.objects.all().count()
         self.assertEquals(res.status_code, status.HTTP_204_NO_CONTENT)
         self.assertGreater(prev_expense_count, current_expense_count)
-
-  
