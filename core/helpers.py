@@ -13,6 +13,7 @@ one_month_ago = today - timedelta(days=30)
 current_month = today.month
 
 
+
 def get_trunc_week(user):
     filtered = (
         Expense.objects.all()

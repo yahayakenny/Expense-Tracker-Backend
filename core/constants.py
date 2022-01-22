@@ -1,0 +1,2 @@
+INCOME = "income"
+EXPENSE = "expense"
