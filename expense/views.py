@@ -1,7 +1,7 @@
 import csv
 
 import xlwt
-from core.helpers import current_month
+from core.constants import current_month
 from django.http import Http404
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
