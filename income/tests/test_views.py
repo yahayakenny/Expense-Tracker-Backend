@@ -1,37 +1,15 @@
-from random import sample
-from django.http import response
-from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
+from core.helpers import AuthenticateUser
 from income.models import Income
 
+from django.urls import reverse
 
-class TestIncomeView(APITestCase):
+
+class TestIncomeView(AuthenticateUser):
     def create_income(self):
         sample_income = {"name": "new income", "amount": 400, "description": "a sample income"}
         response = self.client.post(reverse("income:income_list"), sample_income)
         return response
-
-    def authenticate_user(self):
-        self.client.post(
-            reverse("users:register"),
-            {
-                "first_name": "test",
-                "last_name": "user",
-                "email": "user@email.com",
-                "username": "testuser",
-                "password": "password",
-            },
-        )
-        response = self.client.post(
-            reverse("users:login"),
-            {
-                "username": "testuser",
-                "password": "password",
-            },
-        )
-        token = response.data["token"]
-        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
     def test_cannot_retrieve_income_list_without_auth(self):
         response = self.client.get(reverse("income:income_list"))
@@ -71,16 +49,17 @@ class TestIncomeView(APITestCase):
     def test_can_edit_income(self):
         self.authenticate_user()
         response = self.create_income()
-        res = self.client.put(reverse("income:income_detail", args=[response.data["id"]]), {"name": "updated income", "amount": 600, "description": "an updated sample income"})
+        res = self.client.put(
+            reverse("income:income_detail", args=[response.data["id"]]),
+            {"name": "updated income", "amount": 600, "description": "an updated sample income"},
+        )
         self.assertEquals(res.status_code, status.HTTP_200_OK)
-
 
     def test_can_delete_income(self):
         self.authenticate_user()
         response = self.create_income()
-        prev_income_count=Income.objects.all().count()
+        prev_income_count = Income.objects.all().count()
         res = self.client.delete(reverse("income:income_detail", args=[response.data["id"]]))
-        current_income_count=Income.objects.all().count()
+        current_income_count = Income.objects.all().count()
         self.assertEquals(res.status_code, status.HTTP_204_NO_CONTENT)
         self.assertGreater(prev_income_count, current_income_count)
-

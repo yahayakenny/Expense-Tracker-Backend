@@ -19,17 +19,16 @@ class Expense(models.Model):
         return self.name
 
     @staticmethod
-    def get_expense_total(from_date, to_date, select, user):
-        if select == "expense":
-            if from_date == to_date:
-                filtered_expense = Expense.objects.filter(user=user).filter(date=to_date)
-                expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
-                return expense_sum
-            else:
-                filtered_expense = (
-                    Expense.objects.filter(user=user)
-                    .filter(date__range=(from_date, to_date))
-                    .order_by("-id")
-                )
-                expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
-                return expense_sum
+    def get_expense_total(from_date, to_date, user):
+        if from_date == to_date:
+            filtered_expense = Expense.objects.filter(user=user).filter(date=to_date)
+            expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
+            return expense_sum
+        else:
+            filtered_expense = (
+                Expense.objects.filter(user=user)
+                .filter(date__range=(from_date, to_date))
+                .order_by("-id")
+            )
+            expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
+            return expense_sum
