@@ -11,7 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.utils import current_month, get_trunc_week, one_week_ago, today
+from core.helpers import current_month, get_trunc_week, one_week_ago, today
+from core.constants import INCOME, EXPENSE
 
 
 # Get all expenses for a date range(from_date and to_date on front end)
@@ -22,54 +23,40 @@ class QueryDateRangeView(APIView):
         from_date = request.GET.get("from_date")
         to_date = request.GET.get("to_date")
         select = request.GET.get("select")
-
-        def get_query(from_date, to_date, select):
-            if select == "expense":
-                if from_date == to_date:
-                    filtered_expense = Expense.objects.filter(user=request.user).filter(
-                        date=to_date
-                    )
-                    serializer = ExpenseSerializer(filtered_expense, many=True)
-                    expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
-                    data = {"filtered": serializer.data, "total": expense_sum}
-                    return data
-                else:
-                    filtered_expense = (
-                        Expense.objects.filter(user=request.user)
-                        .filter(date__range=(from_date, to_date))
-                        .order_by("-id")
-                    )
-                    serializer = ExpenseSerializer(filtered_expense, many=True)
-                    expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
-                    data = {"filtered": serializer.data, "total": expense_sum}
-                    return data
-            if select == "income":
-                if from_date == to_date:
-                    filtered_income = Income.objects.filter(user=request.user).filter(date=to_date)
-                    serializer = IncomeSerializer(filtered_income, many=True)
-                    income_sum = round((sum(income.amount for income in filtered_income)), 2)
-                    data = {"filtered": serializer.data, "total": income_sum}
-                    return data
-                else:
-                    filtered_income = (
-                        Income.objects.filter(user=request.user)
-                        .filter(date__range=(from_date, to_date))
-                        .order_by("-id")
-                    )
-                    serializer = IncomeSerializer(filtered_income, many=True)
-                    income_sum = round((sum(income.amount for income in filtered_income)), 2)
-                    data = {"filtered": serializer.data, "total": income_sum}
-                    return data
-
-        try:
-            json_data = get_query(from_date, to_date, select)
-            if json_data:
-                return Response(json_data, status=status.HTTP_200_OK)
-        except:
-            return Response(
-                data={"message": "Results not found, Invalid parameters"},
-                status=status.HTTP_404_NOT_FOUND,
+        if select == EXPENSE:
+            filtered_expense = (
+                Expense.objects.filter(user=request.user)
+                .filter(date__range=(from_date, to_date))
+                .order_by("-id")
             )
+            serializer = ExpenseSerializer(filtered_expense, many=True)
+            expense_sum = Expense.get_expense_total(from_date, to_date, select, request.user)
+            json_data = {"filtered": serializer.data, "total": expense_sum}
+            try:
+                if json_data:
+                    return Response(json_data, status=status.HTTP_200_OK)
+            except:
+                return Response(
+                    data={"message": "Results not found, Invalid parameters"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+        if select == INCOME:
+            filtered_income = (
+                Income.objects.filter(user=request.user)
+                .filter(date__range=(from_date, to_date))
+                .order_by("-id")
+            )
+            serializer = IncomeSerializer(filtered_income, many=True)
+            income_sum = Income.get_income_total(from_date, to_date, select, request.user)
+            json_data = {"filtered": serializer.data, "total": income_sum}
+            try:
+                if json_data:
+                    return Response(json_data, status=status.HTTP_200_OK)
+            except:
+                return Response(
+                    data={"message": "Results not found, Invalid parameters"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
 
 # last 7 days
