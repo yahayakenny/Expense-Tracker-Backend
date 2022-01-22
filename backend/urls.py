@@ -21,7 +21,7 @@ from django.views.static import serve
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/v1/", include("expense.urls", namespace="expenses")),
+    path("api/v1/", include("expense.urls", namespace="expense")),
     path("api/v1/", include("income.urls",namespace="income")),
     path("api/v1/", include("users.urls", namespace="users")),
     path("api/v1/", include("core.urls", namespace="core")),
