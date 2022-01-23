@@ -94,7 +94,8 @@ class QueryMonthGraph(APIView):
 
     def get(self, request):
         try:
-            return Response(Expense.get_expenses_monthly_for_the_year(request.user))
+            data = Expense.get_expenses_monthly_for_the_year(request.user)
+            return Response({"filtered": data})
         except:
             return Response(
                 data={"message": "Unable to get monthly expenses for the year"},
@@ -122,7 +123,7 @@ class QueryMostRecentView(APIView):
 
 
 class QueryNetView(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         try:

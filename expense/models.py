@@ -25,8 +25,7 @@ class Expense(models.Model):
         return self.name
 
     @staticmethod
-    def get_expense_total(from_date, to_date, select, user):
-        if select == "expense":
+    def get_expense_total(from_date, to_date, user):
             if from_date == to_date:
                 filtered_expense = Expense.objects.filter(user=user).filter(date=to_date)
                 expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
