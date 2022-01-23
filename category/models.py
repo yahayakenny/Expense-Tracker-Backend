@@ -19,7 +19,7 @@ class Category(models.Model):
         return sum([expense.amount for expense in expenses])
 
 
-#signals that create default categories on creating a new user
+# signals that create default categories on creating a new user
 @receiver(post_save, sender=User)
 def create_default_categories(sender, instance, created, **kwargs) -> None:
     if created:
