@@ -1,6 +1,3 @@
-import calendar
-from datetime import timedelta
-
 from category.models import Category
 from expense.models import Expense
 from expense.serializers import ExpenseSerializer
@@ -11,8 +8,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.helpers import current_month, get_trunc_week, one_week_ago, today
-from core.constants import INCOME, EXPENSE
+from core.constants import INCOME, EXPENSE, current_month
+from core.helpers import get_trunc_week
 
 
 # Get all expenses for a date range(from_date and to_date on front end)
@@ -64,19 +61,14 @@ class QueryDayGraph(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        data = []
-        delta = today - one_week_ago
         try:
-            for i in range(delta.days + 1):
-                day = one_week_ago + timedelta(days=i)
-                queryset = Expense.objects.filter(user=request.user).filter(date__startswith=day)
-                day_cost = sum([expense.amount for expense in queryset])
-                data.append({"day": day, "amount": day_cost})
-            return Response({"filtered": data}, status=status.HTTP_200_OK)
-
+            return Response(
+                {"filtered": Expense.get_expenses_daily_for_the_week(request.user)},
+                status=status.HTTP_200_OK,
+            )
         except:
             return Response(
-                data={"message": "Unable to get expenses for date range"},
+                data={"message": "Unable to get daily expenses for the last week"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -87,11 +79,11 @@ class QueryWeekGraph(APIView):
 
     def get(self, request):
         try:
-            return Response(get_trunc_week(user=request.user), status=status.HTTP_200_OK)
+            return Response({"filtered": get_trunc_week(user=request.user)}, status=status.HTTP_200_OK)
 
         except:
             return Response(
-                data={"message": "Unable to get expenses for the week"},
+                data={"message": "Unable to get expenses for each week of the month"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -101,17 +93,12 @@ class QueryMonthGraph(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        data = []
         try:
-            for i in range(1, 13):
-                months = Expense.objects.filter(user=request.user).filter(date__month=i)
-                month_cost = sum([expense.amount for expense in months])
-                month_name = calendar.month_name[i]
-                data.append({"month": month_name, "amount": month_cost})
+            data = Expense.get_expenses_monthly_for_the_year(request.user)
             return Response({"filtered": data}, status=status.HTTP_200_OK)
         except:
             return Response(
-                data={"message": "Unable to get expenses for the month"},
+                data={"message": "Unable to get monthly expenses for the year"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -127,41 +114,19 @@ class QueryMostRecentView(APIView):
                 .order_by("-id")[:5]
             )
             serializer = ExpenseSerializer(filtered, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"filtered":serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response(
-                data={"message": "Unable to get categories"}, status=status.HTTP_400_BAD_REQUEST
+                data={"message": "Unable to get most recent expenses"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
 class QueryNetView(APIView):
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         try:
-
-            total_expenses = Expense.objects.filter(user=request.user).filter(
-                date__month=str(current_month)
-            )
-            expense_count = (
-                Expense.objects.filter(user=request.user)
-                .filter(date__month=str(current_month))
-                .all()
-                .count()
-            )
-
-            expense_sum = round((sum(expense.amount for expense in total_expenses)), 2)
-            total_income = Income.objects.filter(user=request.user).filter(
-                date__month=str(current_month)
-            )
-            income_count = (
-                Income.objects.filter(user=request.user)
-                .filter(date__month=str(current_month))
-                .all()
-                .count()
-            )
-
-            income_sum = round((sum(income.amount for income in total_income)), 2)
             category_count = (
                 Category.objects.filter(user=request.user)
                 .filter(date__month=str(current_month))
@@ -169,21 +134,13 @@ class QueryNetView(APIView):
                 .count()
             )
 
-            net_value = round((income_sum - expense_sum), 2)
-            return Response(
-                {
-                    "expense": expense_sum,
-                    "income": income_sum,
-                    "net": net_value,
-                    "incomeCount": income_count,
-                    "expenseCount": expense_count,
-                    "categoryCount": category_count,
-                },
-                status=status.HTTP_200_OK,
-            )
+            data = Expense.get_net_expenses_for_the_month(request.user)
+            data[0]["categoryCount"] = category_count
+
+            return Response({"filtered": data},  status=status.HTTP_200_OK)
         except:
             return Response(
-                data={"message": "Unable to get most recent expenses"},
+                data={"message": "Unable to get net expenses"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
