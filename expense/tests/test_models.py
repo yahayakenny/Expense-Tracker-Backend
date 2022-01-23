@@ -20,4 +20,4 @@ class TestExpenseModel(AuthenticateUser):
         self.assertEquals(total_expense_filtered_today, 2600)
         self.assertEquals(total_expense_filtered_tomorrow, 0)
 
-    def 
+   
