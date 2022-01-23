@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+
 # Create your views here.
 from .models import Category
 from .serializers import CategorySerializer
@@ -33,7 +34,8 @@ class CategoryListView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except:
             return Response(
-                data={"message": "Unable to create category"}, status=status.HTTP_406_NOT_ACCEPTABLE
+                data={"message": "Unable to create category"},
+                status=status.HTTP_406_NOT_ACCEPTABLE,
             )
 
 
