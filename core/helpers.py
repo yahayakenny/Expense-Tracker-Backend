@@ -14,8 +14,7 @@ def get_trunc_week(user):
         .annotate(total=Sum("amount"))
         .order_by("week")
     )
-    data = {"filtered": filtered}
-    return data
+    return filtered
 
 
 class AuthenticateUser(APITestCase):

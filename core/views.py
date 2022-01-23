@@ -79,7 +79,7 @@ class QueryWeekGraph(APIView):
 
     def get(self, request):
         try:
-            return Response(get_trunc_week(user=request.user), status=status.HTTP_200_OK)
+            return Response({"filtered": get_trunc_week(user=request.user)}, status=status.HTTP_200_OK)
 
         except:
             return Response(
@@ -95,7 +95,7 @@ class QueryMonthGraph(APIView):
     def get(self, request):
         try:
             data = Expense.get_expenses_monthly_for_the_year(request.user)
-            return Response({"filtered": data})
+            return Response({"filtered": data}, status=status.HTTP_200_OK)
         except:
             return Response(
                 data={"message": "Unable to get monthly expenses for the year"},
@@ -114,7 +114,7 @@ class QueryMostRecentView(APIView):
                 .order_by("-id")[:5]
             )
             serializer = ExpenseSerializer(filtered, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"filtered":serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response(
                 data={"message": "Unable to get most recent expenses"},
@@ -136,7 +136,8 @@ class QueryNetView(APIView):
 
             data = Expense.get_net_expenses_for_the_month(request.user)
             data[0]["categoryCount"] = category_count
-            return Response(data, status=status.HTTP_200_OK)
+
+            return Response({"filtered": data},  status=status.HTTP_200_OK)
         except:
             return Response(
                 data={"message": "Unable to get net expenses"},
