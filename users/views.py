@@ -34,6 +34,7 @@ class UserProfile(APIView):
 
 
 # create a new user
+#This view is currently now working properly
 class RegisterUser(APIView):
     def post(self, request, format=None):
         data = request.data
