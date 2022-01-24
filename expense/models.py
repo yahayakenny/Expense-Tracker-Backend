@@ -26,25 +26,28 @@ class Expense(models.Model):
 
     @staticmethod
     def get_expense_total(from_date, to_date, user):
-            if from_date == to_date:
-                filtered_expense = Expense.objects.filter(user=user).filter(date=to_date)
-                expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
-                return expense_sum
-            else:
-                filtered_expense = (
-                    Expense.objects.filter(user=user)
-                    .filter(date__range=(from_date, to_date))
-                    .order_by("-id")
-                )
-                expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
-                return expense_sum
+        if from_date == to_date:
+            filtered_expense = Expense.objects.filter(user=user).filter(date=to_date)
+            expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
+            return expense_sum
+        else:
+            filtered_expense = (
+                Expense.objects.filter(user=user)
+                .filter(date__range=(from_date, to_date))
+                .order_by("-id")
+            )
+            expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
+            return expense_sum
 
     @staticmethod
     def get_expenses_daily_for_the_week(user):
         data = []
         delta = today - one_week_ago
+        print(delta)
+        print(delta.days)
         for i in range(delta.days + 1):
             day = one_week_ago + timedelta(days=i)
+            print(day)
             queryset = Expense.objects.filter(user=user).filter(date__startswith=day)
             day_cost = sum([expense.amount for expense in queryset])
             data.append({"day": day, "amount": day_cost})

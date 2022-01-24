@@ -66,7 +66,10 @@ class ExpenseDetailView(APIView):
             serializer = ExpenseSerializer(expense)
             return Response(serializer.data)
         else:
-            raise Http404
+            return Response(
+                data={"message": "Forbidden, Not Authorized"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
     def put(self, request, pk):
         expense = self.get_object(pk)
@@ -80,16 +83,23 @@ class ExpenseDetailView(APIView):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
-            else:
-                raise Http404
-
-    def delete(self, request, pk):
-        expense = self.get_object(pk)
-        if request.user == expense.user:
-            expense.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            raise Http404
+            return Response(
+                data={"message": "Forbidden, Not Authorized"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+
+def delete(self, request, pk):
+    expense = self.get_object(pk)
+    if request.user == expense.user:
+        expense.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response(
+            data={"message": "Forbidden, Not Authorized"},
+            status=status.HTTP_401_UNAUTHORIZED,
+        )
 
 
 class ExportExpenseCsv(APIView):

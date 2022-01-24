@@ -61,7 +61,7 @@ class CategoryDetailView(APIView):
                 )
         else:
             return Response(
-                data={"message": "Not allowed"},
+                data={"message": "Forbidden, Not Authorized"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
@@ -84,7 +84,7 @@ class CategoryDetailView(APIView):
                 )
         else:
             return Response(
-                data={"message": "Not allowed"},
+                data={"message": "Forbidden, Not Authorized"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
