@@ -42,12 +42,9 @@ class Expense(models.Model):
     @staticmethod
     def get_expenses_daily_for_the_week(user):
         data = []
-        delta = today - one_week_ago
-        print(delta)
-        print(delta.days)
+        delta = today - one_week_ago 
         for i in range(delta.days + 1):
             day = one_week_ago + timedelta(days=i)
-            print(day)
             queryset = Expense.objects.filter(user=user).filter(date__startswith=day)
             day_cost = sum([expense.amount for expense in queryset])
             data.append({"day": day, "amount": day_cost})
