@@ -1,6 +1,6 @@
 from income.models import Income
 from core.helpers import AuthenticateUser
-from core.helpers import today
+from core.constants import today
 
 
 class IncomeModelTest(AuthenticateUser):

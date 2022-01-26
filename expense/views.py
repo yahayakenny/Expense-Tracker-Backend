@@ -11,9 +11,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
-from .serializers import ExpenseSerializer
-
 from .models import Expense
+from .serializers import ExpenseSerializer
 
 
 class ExpenseListView(APIView):
@@ -30,7 +29,8 @@ class ExpenseListView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response(
-                data={"message": "Unable to retrieve expenses"}, status=status.HTTP_400_BAD_REQUEST
+                data={"message": "Unable to retrieve expenses"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def post(self, request):
@@ -47,7 +47,8 @@ class ExpenseListView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except:
             return Response(
-                data={"message": "Unable to create expense"}, status=status.HTTP_400_BAD_REQUEST
+                data={"message": "Unable to create expense"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
@@ -89,17 +90,16 @@ class ExpenseDetailView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-
-def delete(self, request, pk):
-    expense = self.get_object(pk)
-    if request.user == expense.user:
-        expense.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    else:
-        return Response(
-            data={"message": "Forbidden, Not Authorized"},
-            status=status.HTTP_401_UNAUTHORIZED,
-        )
+    def delete(self, request, pk):
+        expense = self.get_object(pk)
+        if request.user == expense.user:
+            expense.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(
+                data={"message": "Forbidden, Not Authorized"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
 
 class ExportExpenseCsv(APIView):
@@ -115,7 +115,12 @@ class ExportExpenseCsv(APIView):
         )
         for expense in expenses:
             writer.writerow(
-                [expense.name, expense.category.name, expense.amount, expense.description]
+                [
+                    expense.name,
+                    expense.category.name,
+                    expense.amount,
+                    expense.description,
+                ]
             )
         return response
 

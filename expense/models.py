@@ -12,7 +12,9 @@ from core.constants import today, one_week_ago, current_month
 
 
 class Expense(models.Model):
-    user = models.ForeignKey(User, related_name="expenses", on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        User, related_name="expenses", on_delete=models.SET_NULL, null=True
+    )
     name = models.CharField(max_length=30, blank=True, null=True)
     amount = models.FloatField(default=0, blank=True)
     category = models.ForeignKey(
@@ -28,7 +30,9 @@ class Expense(models.Model):
     def get_expense_total(from_date, to_date, user):
         if from_date == to_date:
             filtered_expense = Expense.objects.filter(user=user).filter(date=to_date)
-            expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
+            expense_sum = round(
+                (sum(expense.amount for expense in filtered_expense)), 2
+            )
             return expense_sum
         else:
             filtered_expense = (
@@ -36,13 +40,15 @@ class Expense(models.Model):
                 .filter(date__range=(from_date, to_date))
                 .order_by("-id")
             )
-            expense_sum = round((sum(expense.amount for expense in filtered_expense)), 2)
+            expense_sum = round(
+                (sum(expense.amount for expense in filtered_expense)), 2
+            )
             return expense_sum
 
     @staticmethod
     def get_expenses_daily_for_the_week(user):
         data = []
-        delta = today - one_week_ago 
+        delta = today - one_week_ago
         for i in range(delta.days + 1):
             day = one_week_ago + timedelta(days=i)
             queryset = Expense.objects.filter(user=user).filter(date__startswith=day)
@@ -62,14 +68,24 @@ class Expense(models.Model):
 
     @staticmethod
     def get_net_expenses_for_the_month(user):
-        total_expenses = Expense.objects.filter(user=user).filter(date__month=str(current_month))
+        total_expenses = Expense.objects.filter(user=user).filter(
+            date__month=str(current_month)
+        )
         expense_count = (
-            Expense.objects.filter(user=user).filter(date__month=str(current_month)).all().count()
+            Expense.objects.filter(user=user)
+            .filter(date__month=str(current_month))
+            .all()
+            .count()
         )
         expense_sum = round((sum(expense.amount for expense in total_expenses)), 2)
-        total_income = Income.objects.filter(user=user).filter(date__month=str(current_month))
+        total_income = Income.objects.filter(user=user).filter(
+            date__month=str(current_month)
+        )
         income_count = (
-            Income.objects.filter(user=user).filter(date__month=str(current_month)).all().count()
+            Income.objects.filter(user=user)
+            .filter(date__month=str(current_month))
+            .all()
+            .count()
         )
         income_sum = round((sum(income.amount for income in total_income)), 2)
         net_value = round((income_sum - expense_sum), 2)

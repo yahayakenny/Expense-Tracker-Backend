@@ -12,19 +12,19 @@ class SettingsListView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
-        try: 
+        try:
             results = Settings.objects.all().filter(user=request.user).order_by("-id")
             serializer = SettingsSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except:
             return Response(
-                data={"message": "Unable to retrieve settings"}, status=status.HTTP_400_BAD_REQUEST
+                data={"message": "Unable to retrieve settings"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def post(self, request):
-        try: 
+        try:
             data = request.data
-            print(data)
             settings = Settings.objects.create(
                 currency=data["currency"], limit=data["limit"], user=request.user
             )
@@ -32,7 +32,8 @@ class SettingsListView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except:
             return Response(
-                data={"message": "Unable to add settings"}, status=status.HTTP_400_BAD_REQUEST
+                data={"message": "Unable to add settings"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 

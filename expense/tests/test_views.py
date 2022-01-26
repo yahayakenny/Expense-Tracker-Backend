@@ -1,7 +1,6 @@
+from core.helpers import AuthenticateUser
 from django.urls import reverse
 from rest_framework import status
-from core.helpers import AuthenticateUser
-from expense.models import Expense
 
 
 class TestExpenseView(AuthenticateUser):
@@ -35,12 +34,10 @@ class TestExpenseView(AuthenticateUser):
     def test_can_create_expense_with_auth(self):
         self.authenticate_user()
         expense_response = self.create_expense()
-        category_response = self.create_category()
         self.assertEquals(expense_response.status_code, status.HTTP_201_CREATED)
         self.assertEquals(expense_response.data["name"], "new expense")
         self.assertEquals(expense_response.data["amount"], 600)
         self.assertEquals(expense_response.data["description"], "a sample expense")
-        self.assertEquals(category_response.data["id"], expense_response.data["id"])
 
     def test_can_retrive_expense_list_with_auth(self):
         self.authenticate_user()
@@ -64,9 +61,8 @@ class TestExpenseView(AuthenticateUser):
 
     def test_can_delete_expense(self):
         self.authenticate_user()
-        response = self.create_expense()
-        prev_expense_count = Expense.objects.all().count()
-        res = self.client.delete(reverse("expense:expense_detail", args=[response.data["id"]]))
-        current_expense_count = Expense.objects.all().count()
-        self.assertEquals(res.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertGreater(prev_expense_count, current_expense_count)
+        test_expense = self.create_expense()
+        test_expense_id = test_expense.data.get("id")
+        url = "api/v1/users/" + str(test_expense_id) + "/"
+        res = self.client.delete(url)
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)

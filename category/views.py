@@ -72,7 +72,7 @@ class CategoryDetailView(APIView):
                 serializer = CategorySerializer(category, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
-                    return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
                 else:
                     return Response(
                         data={"message": "Invalid parameters"}, status=status.HTTP_400_BAD_REQUEST
@@ -94,4 +94,7 @@ class CategoryDetailView(APIView):
             category.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            raise Http404
+            return Response(
+                data={"message": "Forbidden, Not Authorized"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
