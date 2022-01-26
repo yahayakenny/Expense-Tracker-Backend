@@ -20,40 +20,39 @@ class QueryDateRangeView(APIView):
         from_date = request.GET.get("from_date")
         to_date = request.GET.get("to_date")
         select = request.GET.get("select")
-        if select == EXPENSE:
-            filtered_expense = (
-                Expense.objects.filter(user=request.user)
-                .filter(date__range=(from_date, to_date))
-                .order_by("-id")
-            )
-            serializer = ExpenseSerializer(filtered_expense, many=True)
-            expense_sum = Expense.get_expense_total(from_date, to_date, request.user)
-            json_data = {"filtered": serializer.data, "total": expense_sum}
-            try:
+        try:
+            if select == EXPENSE:
+                filtered_expense = (
+                    Expense.objects.filter(user=request.user)
+                    .filter(date__range=(from_date, to_date))
+                    .order_by("-id")
+                )
+                serializer = ExpenseSerializer(filtered_expense, many=True)
+                expense_sum = Expense.get_expense_total(
+                    from_date, to_date, request.user
+                )
+                json_data = {"filtered": serializer.data, "total": expense_sum}
                 if json_data:
                     return Response(json_data, status=status.HTTP_200_OK)
-            except:
-                return Response(
-                    data={"message": "Results not found, Invalid parameters"},
-                    status=status.HTTP_404_NOT_FOUND,
+
+            if select == INCOME:
+                filtered_income = (
+                    Income.objects.filter(user=request.user)
+                    .filter(date__range=(from_date, to_date))
+                    .order_by("-id")
                 )
-        if select == INCOME:
-            filtered_income = (
-                Income.objects.filter(user=request.user)
-                .filter(date__range=(from_date, to_date))
-                .order_by("-id")
-            )
-            serializer = IncomeSerializer(filtered_income, many=True)
-            income_sum = Income.get_income_total(from_date, to_date, request.user)
-            json_data = {"filtered": serializer.data, "total": income_sum}
-            try:
+                serializer = IncomeSerializer(filtered_income, many=True)
+                income_sum = Income.get_income_total(from_date, to_date, request.user)
+                json_data = {"filtered": serializer.data, "total": income_sum}
+
                 if json_data:
                     return Response(json_data, status=status.HTTP_200_OK)
-            except:
-                return Response(
-                    data={"message": "Results not found, Invalid parameters"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
+
+        except:
+            return Response(
+                data={"message": "Results not found, Invalid parameters"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 # last 7 days
@@ -79,7 +78,10 @@ class QueryWeekGraph(APIView):
 
     def get(self, request):
         try:
-            return Response({"filtered": get_trunc_week(user=request.user)}, status=status.HTTP_200_OK)
+            return Response(
+                {"filtered": get_trunc_week(user=request.user)},
+                status=status.HTTP_200_OK,
+            )
 
         except:
             return Response(
@@ -114,7 +116,7 @@ class QueryMostRecentView(APIView):
                 .order_by("-id")[:5]
             )
             serializer = ExpenseSerializer(filtered, many=True)
-            return Response({"filtered":serializer.data}, status=status.HTTP_200_OK)
+            return Response({"filtered": serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response(
                 data={"message": "Unable to get most recent expenses"},
@@ -123,7 +125,7 @@ class QueryMostRecentView(APIView):
 
 
 class QueryNetView(APIView):
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         try:
@@ -137,7 +139,7 @@ class QueryNetView(APIView):
             data = Expense.get_net_expenses_for_the_month(request.user)
             data[0]["categoryCount"] = category_count
 
-            return Response({"filtered": data},  status=status.HTTP_200_OK)
+            return Response({"filtered": data}, status=status.HTTP_200_OK)
         except:
             return Response(
                 data={"message": "Unable to get net expenses"},
