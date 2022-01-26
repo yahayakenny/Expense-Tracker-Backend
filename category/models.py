@@ -28,3 +28,4 @@ def create_default_categories(sender, instance, created, **kwargs) -> None:
         Category.objects.create(user=instance, name="transport")
         Category.objects.create(user=instance, name="bills")
         Category.objects.create(user=instance, name="others")
+

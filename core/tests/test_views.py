@@ -1,7 +1,5 @@
 from core.helpers import AuthenticateUser
 from django.urls import reverse
-from rest_framework import status
-from expense.models import Expense
 
 
 class TestCoreView(AuthenticateUser):
